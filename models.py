@@ -1,5 +1,4 @@
 from peewee import *
-
 db = SqliteDatabase('labtrans.db')
 
 class BaseModel(Model):
@@ -25,4 +24,3 @@ def create_database():
 
     db.close()
 
-create_database()
