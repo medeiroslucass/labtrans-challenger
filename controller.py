@@ -30,37 +30,6 @@ class ResultsHandler(tornado.web.RequestHandler):
         self.write({"results": results_data})
 
 
-class ResultsCSVHandler(tornado.web.RequestHandler):
-    def get(self):
-        highways = Results.select(Results.highway).distinct()
-
-        # Cria a pasta "csv_files" se não existir
-        folder_path = "csv_files"
-        os.makedirs(folder_path, exist_ok=True)
-
-        for highway in highways:
-            query = Results.select(
-                Results.highway,
-                Results.km,
-                fn.SUM(Results.item == "Buraco").alias("buraco"),
-                fn.SUM(Results.item == "Remendo").alias("remendo"),
-                fn.SUM(Results.item == "Trinca").alias("trinca"),
-                fn.SUM(Results.item == "Placa").alias("placa"),
-                fn.SUM(Results.item == "Drenagem").alias("drenagem")
-            ).where(Results.highway == highway.highway).group_by(Results.highway, Results.km)
-
-            results = query.dicts()
-
-            filename = f"resultados_{highway.highway}.csv"
-            file_path = os.path.join(folder_path, filename)
-
-            with open(file_path, 'w', newline='') as file:
-                fieldnames = ['highway', 'km', 'buraco', 'remendo', 'trinca', 'placa', 'drenagem']
-                writer = csv.DictWriter(file, fieldnames=fieldnames)
-                writer.writeheader()
-                writer.writerows(results)
-
-        self.write("CSV files exported successfully.")
 
 
 class ResultadosAgrupadosHandler(tornado.web.RequestHandler):
