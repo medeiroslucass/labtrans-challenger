@@ -1,0 +1,20 @@
+version: '3'
+
+networks:
+  app_network:
+    driver: bridge
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: app
+    tty: true
+    ports:
+      - "8888:8888"
+    entrypoint: /bin/bash -c "if [ ! -f /app_initialized ]; then python models.py && python migrate_data.py && touch /app_initialized; fi && python app.py"
+    volumes:
+      - ./data:/app/data
+    networks:
+      - app_network
