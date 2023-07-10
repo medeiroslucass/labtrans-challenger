@@ -5,7 +5,8 @@ WORKDIR /app
 COPY . /app
 
 # Instalar as dependências
-RUN pip install --no-cache-dir -r requirements.txt
+RUN apt-get update && apt-get install -y vim sqlite3 && \
+    pip install --no-cache-dir -r requirements.txt
 
 # Expõe a porta em que a aplicação será executada
 EXPOSE 8888
